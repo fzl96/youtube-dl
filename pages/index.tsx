@@ -47,6 +47,14 @@ export default function Home() {
     }
   };
 
+  const handleDownload = async () => {
+    if (!videoData) return;
+    if (!url) return;
+    setLoading(true);
+    await fetch(`/api/yt?url=${url}`);
+    setLoading(false);
+  };
+
   return (
     <div className="min-w-screen min-h-screen flex flex-col justify-center items-center bg-[#1e2336] text-white text-2xl">
       <h1 className="mb-5">Youtube Info</h1>
@@ -88,6 +96,18 @@ export default function Home() {
             </div>
           </div>
         )}
+
+        <button
+          className={` py-2 px-3 rounded-lg ${
+            loading || !url
+              ? "cursor-not-allowed bg-green-800 text-gray-400"
+              : "bg-green-600"
+          }`}
+          disabled={loading || !url}
+          onClick={handleDownload}
+        >
+          Download
+        </button>
 
         {loading && <p>Loading...</p>}
         {error && <p>{error}</p>}

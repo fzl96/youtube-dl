@@ -23,14 +23,6 @@ export default async function handler(
       return `${mm}:${ss.toString().padStart(2, "0")}`;
     };
 
-    // create a function to format the video format to a readable format
-    const formatVideo = (format: any) => {
-      const qualityLabel = format.qualityLabel || format.quality;
-      return `${format.container} ${qualityLabel} ${
-        format.audioBitrate ? format.audioBitrate : ""
-      }`;
-    };
-
     if (!url) {
       res.status(400).json({ message: "No URL provided" });
       return;
@@ -51,5 +43,20 @@ export default async function handler(
         res.status(400).json({ message: err.message });
       }
     }
+  } else if (req.method === "GET") {
+    const { url } = req.query;
+    if (!url) {
+      res.status(400).json({ message: "No URL provided" });
+      return;
+    }
+    // create a download link
+    const downloadLink = ytdl(url as string, {
+      // format: "mp4",
+      quality: "highestvideo",
+    });
+    // set the response header to download the file
+    res.setHeader("Content-Disposition", "attachment; filename=video.mp4");
+    // pipe the download link to the response
+    downloadLink.pipe(res);
   }
 }
