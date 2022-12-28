@@ -15,7 +15,14 @@ export default function Home() {
 
   const handleFetch = async (url: string) => {
     setLoading(true);
-    const res = await fetch(`/api/yt?url=${url}`);
+    const res = await fetch("/api/yt", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ url }),
+    });
+
     if (!res.ok) {
       const data = await res.json();
       setLoading(false);
