@@ -12,6 +12,7 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [videoData, setVideoData] = useState<VideoData | null>(null);
   const [error, setError] = useState("");
+  const [link, setLink] = useState("");
 
   const handleFetch = async (url: string) => {
     setLoading(true);
@@ -51,7 +52,10 @@ export default function Home() {
     if (!videoData) return;
     if (!url) return;
     setLoading(true);
-    await fetch(`/api/yt?url=${url}`);
+    const res = await fetch(`/api/yt?url=${url}`);
+    const blob = await res.blob();
+    const downloadUrl = URL.createObjectURL(blob);
+    setLink(downloadUrl);
     setLoading(false);
   };
 
@@ -108,7 +112,11 @@ export default function Home() {
         >
           Download
         </button>
-
+        {link && (
+          <a href={link} download className="py-2 px-3 rounded-lg bg-green-600">
+            Download
+          </a>
+        )}
         {loading && <p>Loading...</p>}
         {error && <p>{error}</p>}
       </form>
